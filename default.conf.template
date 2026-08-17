@@ -1,0 +1,30 @@
+server {
+    listen ${PORT};
+    listen [::]:${PORT};
+
+    server_name _;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location ~* \.wasm$ {
+        default_type application/wasm;
+        try_files $uri =404;
+        expires 7d;
+        add_header Cache-Control "public, max-age=604800";
+    }
+
+    location ~* \.(css|js|png|jpg|jpeg|gif|svg|ico|webmanifest)$ {
+        try_files $uri =404;
+        expires 1d;
+        add_header Cache-Control "public, max-age=86400";
+    }
+}
+
